@@ -94,7 +94,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         long = location.coordinate.longitude
         
-        AF.request("https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(long)&appid=\(APIKey)&units=imperial").responseJSON { response in self.activityIndicator.stopAnimating()
+        AF.request("https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(long)&appid=\(APIKey)&units=imperial").responseJSON { response in self.activityIndicator.stopAnimating() 
             
             if let responseStr = response.result.value {
                 
