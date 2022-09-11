@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Foundation
 import Alamofire
 import SwiftyJSON
 import NVActivityIndicatorView
@@ -29,7 +30,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     var lat = 36.1716
     
-    var long = 115.1391
+    var long = -115.1391
     
     //get loading bar
     
@@ -94,25 +95,35 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         long = location.coordinate.longitude
         
-        AF.request("https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(long)&appid=\(APIKey)&units=imperial").responseJSON { response in self.activityIndicator.stopAnimating() 
-            
-            if let responseStr = response.result.value {
-                
-                let jsonResponse = JSON(data: responseStr)
-                
-                let jsonWeather = jsonResponse["weather"].array![0]
-                
-                let jsonTemp = jsonResponse["main"]
-                
-                let iconName = jsonWeather["icon"].stringValue
-                
-            }
-            
-            
-            
+//        OpenWeatherMapAPI setup
+        
+        let URL = URL(string: "https://api.openweathermap.org/data/2.5/weather?lat=\(lat)&lon=\(long)&appid=\(APIKey)&units=imperial")!
+        
+        AF.request(URL).responseJSON { response in
+            self.activityIndicator.stopAnimating()
         }
         
-    }
+        let jsonResponse = JSON(URL)
+        
+        let jsonWeather = jsonResponse["weather"].array![0]
+        
+        let jsonTemp = jsonResponse["main"]
+        
+        //populate text + images with JSON data
+        
+        let iconName = jsonWeather["icon"].stringValue
+        
+        self.cityLabel.text = jsonResponse["name"].stringValue
+        
+        self.weatherImageView.image = UIImage(named: iconName)
+        
+        self.conditionLabel.text = jsonResponse["main"].stringValue
+       
+        self.temperatureLabel.text = "\(Int(round(jsonTemp["temp"].doubleValue)))"
+        
+   }
+            
+        
     
     func setBlueGradientBackground() {
         
